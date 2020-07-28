@@ -4,12 +4,44 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Vue</title>
+  <style>
+    .active {
+      background: red;
+      color: #fff;
+    }
+  </style>
 </head>
 
 <body>
   <div id="app">
+    <!--插值文本-->
     <h2>{{title}}</h2>
+    <!-- 属性绑定 -->
+    <h2 :title='title'>{{title}}</h2>
+    <!-- 列表渲染 -->
+    <div v-for="(item,index) in list" :key="index">
+      {{ item }}
+    </div>
+    <!-- 表单输入绑定 -->
+    <input type="text" v-model='val'>
+    <!-- 事件处理 -->
+    <button @click='add'>新增</button>
+    <!-- class绑定 -->
+    <ul>
+      <li v-for="(item,index) in list" :key="index" :class="{active:selected===item}" @click="selected=item">
+        {{ item }}
+      </li>
+    </ul>
+    <!-- style绑定 -->
+    <ul>
+      <li v-for="(item,index) in list" :key="index" :style="{backgroundColor:selected===item?'red':'transparent'}"
+        @click="selected=item">
+        {{ item }}
+      </li>
+    </ul>
+    <!-- 计算属性 -->
+    <p>{{total}}</p>
   </div>
 
   <script src="js/vue.js"></script>
@@ -18,9 +50,38 @@
       el: '#app',
       data() {
         return {
-          title: 'hello world'
+          title: 'hello world',
+          selected: '',
+          list: ['语文', '数学', '英语'],
+          val: ''
+
         }
-      }
+      },
+      methods: {
+        add() {
+          this.list.push(this.val)
+          this.val = ''
+        }
+      },
+      // computed: {
+      //   total() {
+      //     return this.list.length + '个'
+      //   }
+      // },
+      watch: {//初始化不会执行
+        list(newValue, oldValue) {
+          this.total = this.list.length + '个'
+        }
+      },
+      watch: {
+        list: {
+          immediate: true,
+          // deep: true,
+          handler(newValue, oldValue) {
+            this.total = this.list.length + '个'
+          }
+        }
+      },
     })
     setTimeout(function () {
       App.title = 'vue.js';
