@@ -52,7 +52,7 @@
         return {
           title: 'hello world',
           selected: '',
-          list: ['语文', '数学', '英语'],
+          list: [],
           val: ''
 
         }
@@ -63,29 +63,42 @@
           this.val = ''
         }
       },
-      // computed: {
-      //   total() {
-      //     return this.list.length + '个'
-      //   }
-      // },
-      watch: {//初始化不会执行
-        list(newValue, oldValue) {
-          this.total = this.list.length + '个'
+      computed: {
+        total() {
+          return this.list.length + '个'
         }
       },
-      watch: {
-        list: {
-          immediate: true,
-          // deep: true,
-          handler(newValue, oldValue) {
-            this.total = this.list.length + '个'
-          }
-        }
-      },
+      /*  watch: {//初始化不会执行
+         list(newValue, oldValue) {
+           this.total = this.list.length + '个'
+         }
+       },
+       watch: {
+         list: {
+           immediate: true,
+           // deep: true,
+           handler(newValue, oldValue) {
+             this.total = this.list.length + '个'
+           }
+         }
+       }, */
+      async created() {
+        const list = await getCourse();
+        this.list = list
+      }
     })
     setTimeout(function () {
       App.title = 'vue.js';
     }, 2000)
+
+    function getCourse() {
+      return new Promise(resoved => {
+        setTimeout(function () {
+          resoved(['语文', '数学', '英语'])
+        }, 1000)
+      })
+
+    }
   </script>
 </body>
 
