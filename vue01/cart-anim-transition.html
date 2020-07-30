@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>css-anim-trasition过度与动画</title>
+  <style>
+    .test {
+      height: 100px;
+      width: 100px;
+      background: green;
+    }
+
+
+    .fade-enter,
+    .fade-leave-to {
+      transform: translateX(20px);
+      opacity: 0;
+    }
+
+
+    /* .fade-enter-active,
+    .fade-leave-active {
+      transition: opacity 2s;
+    } */
+
+    /* 可以设置不同的进入和离开动画 */
+    /* 设置持续时间和动画函数 */
+    .fade-enter-active {
+      transition: all 2s ease;
+      background: red;
+    }
+
+    .fade-leave-active {
+      background: red;
+      transition: all 3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+    }
+
+    .fade-enter-to,
+    .fade-leave {
+      opacity: 1;
+    }
+  </style>
+  <script src="js/vue.js"></script>
+</head>
+
+<body>
+  <h1 class="animate__animated animate__bounce">An animated element</h1>
+  <div id="app">
+    <message v-show="show"></message>
+    <button @click="toggle">toggle</button>
+  </div>
+  <script>
+    // transition-group:列表动画，使用同trasition
+    Vue.component('message', {
+      props: ['show'],
+      template: `
+      <transition  name="fade">
+        <div class="test" >
+        </div>
+      </transition>
+      `
+    })
+
+    const app = new Vue({
+      el: '#app',
+      data() {
+        return {
+          show: false
+        }
+      },
+      methods: {
+        toggle() {
+          this.show = !this.show
+        }
+      },
+    })
+  </script>
+</body>
+
+</html>
