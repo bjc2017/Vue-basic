@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>生命周期</title>
+  <script src="js/vue.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <h1>初始化流程</h1>
+    <p ref='p-foo'>{{foo}}</p>
+  </div>
+  <script>
+    const app = new Vue({
+      el: '#app',
+      data() {
+        return {
+          foo: 'q'
+        }
+      },
+      beforeCreate() {
+        console.log('beforeCreate')
+      },
+      created() {
+        console.log('created:' + this.$el + this);
+      },
+      beforeMount() {
+        console.log('beforeMount');
+      },
+      mounted() {
+        console.log('mounted:' + this.$el);
+        setTimeout(() => {
+          this.foo = 'abc'
+        }, 2000)
+      },
+      beforeUpdate() {
+        console.log('beforeUpdate:' + this.$refs['p-foo'].innerText);
+      },
+      updated() {
+        console.log('updated:' + this.foo);
+      }
+    })
+  </script>
+</body>
+
+</html>

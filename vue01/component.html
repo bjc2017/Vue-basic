@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>组件化</title>
+  <style>
+    .message {
+      padding: 10px 20px;
+      background: red;
+
+    }
+
+    .warning {
+      padding: 10px 20px;
+      background: gray;
+    }
+
+    .close {
+      float: right;
+    }
+  </style>
+  <script src='js/vue.js'></script>
+</head>
+
+<body>
+  <div id="app">
+    <!-- 插槽实现内容分发 -->
+    <message :show.sync="show">
+      <template v-slot:title>fffff</template>
+      <template>成功</template>
+    </message>
+
+    <message :show.sync="warning" class="warning">
+      <template>warning</template>
+    </message>
+
+    <div>
+      <button @click="$bus.$emit('all-close')">全部关闭</button>
+    </div>
+
+    <!-- 自定义组件 -->
+    <ul-item :data="list"></ul-item>
+    <!-- 自定义组件支持v-model需要实现内部input的:value和@input -->
+    <div-add v-model="course" @add="add"></div-add>
+  </div>
+  <script>
+    Vue.prototype.$bus = new Vue();
+    Vue.component('ul-item', {
+      props: {
+        data: {
+          type: Array,
+          default: []
+        }
+      },
+      template: `<div>
+      <p v-if="this.data.length===0">暂无课程列表</p>
+      <ul v-else>
+                  <li v-for="item in data" :key="item">{{item}}</li>
+                </ul>
+                </div>`
+    })
+
+    Vue.component('div-add', {
+      // data() {
+      //   return {
+      //     val: ''
+      //   }
+      // },
+      // 接收父组件传递value，不需要额外维护val
+      props: ['value'],
+      template: `<div>
+      <input type="text" :value="value" @input="onInput" @keydown.enter="addCourse" />
+
+      <button @click="addCourse">add</button>
+    </div>`,
+      methods: {
+        addCourse() {
+          this.$emit('add')
+          // this.val = ''
+        },
+        onInput(e) {
+          this.$emit('input', e.target.value)
+        }
+      },
+    })
+
+    Vue.component('message', {
+      props: ['show'],
+      template: `
+      <div class="message" v-show="show">
+        <slot name="title"></slot>
+      <slot></slot>
+      <span class="close" @click="$emit('update:show', false)">X</span>
+    </div>`,
+      mounted() {
+        this.$bus.$on('all-close', () => {
+          this.$emit('update:show', false);
+        })
+      }
+    })
+
+    const app = new Vue({
+      el: '#app',
+      data() {
+        return {
+          warning: true,
+          show: false,
+          course: '',
+          list: []
+        }
+      },
+      methods: {
+        add() {
+          this.list.push(this.course)
+          this.course = ''
+          this.show = true
+
+        }
+      },
+
+    })
+    setTimeout(function () {
+      app.list = ['语文', '数学', '英语']
+    }, 3000)
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue Api</title>
+  <script src="js/vue.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <div v-for="item in list" :key="item.id">
+      {{ item.name }} - ￥{{item.price}}
+    </div>
+    <p>
+      <button @click="setPrice">set</button>
+    </p>
+  </div>
+  <script>
+    const app = new Vue({
+      el: '#app',
+      data() {
+        return {
+          list: [],
+          price: 0
+        }
+      },
+      methods: {
+        setPrice() {
+          this.list.forEach(item => {
+            // item.price = 4
+            // Vue.set(item, 'price', 5)
+            Vue.delete(item, 'price')
+          })
+          this.$emit('test', 'hi')
+        }
+      },
+      async created() {
+        this.list = await getData()
+      }
+    })
+    app.$on('test', function (msg) {
+      console.log(msg);
+    })
+    function getData() {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          resolve([{ id: 1, name: '语文', price: 5 }, { id: 2, name: '数学', price: 7 }])
+        }, 2000)
+      })
+    }
+  </script>
+</body>
+
+</html>
